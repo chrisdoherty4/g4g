@@ -38,7 +38,7 @@ int getGroupCount(std::vector<std::string> &data)
 
     int row, column;
     for(row = 0; row < data.size(); row++) {
-        for(column = 0; column < data[0].size(); column) {
+        for(column = 0; column < data[0].size(); column++) {
             // If we have an X and we haven't visited the coordinates before, explore the new group.
             if(data[row][column] == 'X' && visited.find(std::make_pair(row, column)) == visited.end()) {
                 markGroupVisited(row, column, data, visited);
@@ -52,30 +52,30 @@ int getGroupCount(std::vector<std::string> &data)
 
 int main()
 {
-    int testCases = 0, mute = 0;
+    int testCases = 0;
+
     std::cin >> testCases;
+
+    // Make sure we consume the trailing \n
+    std::cin.ignore();
+
     std::vector<std::string> data;
     std::string token, line;
-    std::istringstream ss;
+
+    int mute;
 
     for(int testCasesIter = 0; testCasesIter < testCases; testCasesIter++) {
         // Make sure our vector is clear from any previous test cases
         data.clear();
 
-        std::cin >> mute;
-        std::cin >> mute;
-
-        std::cin.ignore();
+        // We're discarding the first input of N M because we don't actually need it.
+        std::getline(std::cin, line);
 
         std::getline(std::cin, line);
-        ss.str(line);
+        std::istringstream ss(line);
 
         while(std::getline(ss, token, ' ')) {
             data.push_back(token);
-        }
-
-        for(auto e : data) {
-            std::cout << e << std::endl;
         }
 
         std::cout << getGroupCount(data) << std::endl;
