@@ -3,59 +3,75 @@
 #include <string>
 #include <set>
 #include <utility>
+#include <sstream>
 
 typedef std::set<std::pair<int, int>> group;
 typedef std::vector<group> group_container;
 
-void exploreGroup(int n, int m, std::vector<std::string>> *data, std::vector<std::pair<int,int>> *visited)
+void markGroupVisited(int row, int column, std::vector<std::string> &data, std::set<std::pair<int,int>> &visited)
 {
+    std::pair<int, int> p = std::make_pair(row, column);
 
+    // Make sure the coordinates are within bounds.
+    if(row < 0 || row >= data.size() || column < 0 || column >= data[0].size()) return;
+
+    // Make sure we are in-fact an X
+    if(data[row][column] != 'X') return;
+
+    // Make sure we haven't already visited these coordinates.
+    if(visited.find(p) != visited.end()) return;
+
+    // Mark the node as visited.
+    visited.insert(p);
+
+    // Visit everything around the coordinates.
+    markGroupVisited(row + 1, column, data, visited);
+    markGroupVisited(row - 1, column, data, visited);
+    markGroupVisited(row, column + 1, data, visited);
+    markGroupVisited(row, column - 1, data, visited);
 }
 
-int getGroupCount(int nMax, int mMax, std::vector<std::string>> *data)
+int getGroupCount(std::vector<std::string> &data)
 {
-    // Loop over everything
-    // If there's _not_ a group containing coords, create a new one
-    //  Inspect surrounding coordinates for Xs and add them too
-    // Else we are part of a group, inspect surrounding coords
-    // and add if X
-
     int groups = 0;
-    std::vector<std::pair<int, int>> visited;
+    std::set<std::pair<int, int>> visited;
 
-    int n, m;
-    for(n = 0; n < nMax; n++) {
-        for(m = 0; m < mMax; m++) {
-            std::pair<int, int> p = std::make_pair(n, m);
-
-            if(*data[n][m] == 'X' && visited.find(p) != visited.end())
-                exploreGroup(n, m, data, &visited);
+    int row, column;
+    for(row = 0; row < data.size(); row++) {
+        for(column = 0; column < data[0].size(); column) {
+            // If we have an X and we haven't visited the coordinates before, explore the new group.
+            if((*data)[row][column] == 'X' && visited.find(std::make_pair(row, column)) == visited.end()) {
+                markGroupVisited(row, column, data, visited);
+                groups++;
+            }
         }
     }
+
+    return groups;
 }
 
 int main()
 {
-    int testCases = 0;
+    int testCases = 0, mute = 0;
     std::cin >> testCases;
-
-    int n = 0;
-    int m = 0;
-    std::vector<std::string>> data;
+    std::vector<std::string> data;
+    std::string t, line;
 
     for(int testCasesIter = 0; testCasesIter < testCases; testCasesIter++) {
-        std::cin >> n;
-        std::cin >> m;
-
         // Make sure our vector is clear from any previous test cases
-        data.clear()
+        data.clear();
 
-        // Get rid of the remaining whitespace after cin >> calls
-        std::cin.ignore();
+        std::cin >> mute;
+        std::cin >> mute;
+        std::cin >> t;
 
-        for(std::string line; std::getline(std::cin, line, ' ');) {
-            data.push_back(line)
+        std::stringstream ss(t);
+
+        while(std::getline(ss, line, ' ')) {
+            data.push_back(line);
         }
+
+        std::cout << getGroupCount(data) << std::endl;        
     }
 
     return 0;
