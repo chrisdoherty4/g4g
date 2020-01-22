@@ -40,7 +40,7 @@ int getGroupCount(std::vector<std::string> &data)
     for(row = 0; row < data.size(); row++) {
         for(column = 0; column < data[0].size(); column) {
             // If we have an X and we haven't visited the coordinates before, explore the new group.
-            if((*data)[row][column] == 'X' && visited.find(std::make_pair(row, column)) == visited.end()) {
+            if(data[row][column] == 'X' && visited.find(std::make_pair(row, column)) == visited.end()) {
                 markGroupVisited(row, column, data, visited);
                 groups++;
             }
@@ -55,7 +55,8 @@ int main()
     int testCases = 0, mute = 0;
     std::cin >> testCases;
     std::vector<std::string> data;
-    std::string t, line;
+    std::string token, line;
+    std::istringstream ss;
 
     for(int testCasesIter = 0; testCasesIter < testCases; testCasesIter++) {
         // Make sure our vector is clear from any previous test cases
@@ -63,15 +64,21 @@ int main()
 
         std::cin >> mute;
         std::cin >> mute;
-        std::cin >> t;
 
-        std::stringstream ss(t);
+        std::cin.ignore();
 
-        while(std::getline(ss, line, ' ')) {
-            data.push_back(line);
+        std::getline(std::cin, line);
+        ss.str(line);
+
+        while(std::getline(ss, token, ' ')) {
+            data.push_back(token);
         }
 
-        std::cout << getGroupCount(data) << std::endl;        
+        for(auto e : data) {
+            std::cout << e << std::endl;
+        }
+
+        std::cout << getGroupCount(data) << std::endl;
     }
 
     return 0;
