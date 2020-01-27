@@ -1,0 +1,1 @@
+executable('x-total-shapes', join_paths(meson.current_source_dir(), 'x-total-shapes.cc'))

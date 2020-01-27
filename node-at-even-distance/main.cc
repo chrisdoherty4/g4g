@@ -4,57 +4,9 @@
 #include <sstream>
 #include <memory>
 #include <map>
+#include "Node.hpp"
 
 using namespace std;
-
-class Node;
-typedef vector<shared_ptr<Node>> children_t;
-
-class Node 
-{
-    children_t children;
-
-    int ident;
-
-    Node() {}
-
-public:
-    Node(int ident) : ident(ident) {}
-
-    void addChild(Node& node)
-    {
-        children.push_back(make_shared<Node>(node));
-    }
-
-    children_t getChildren()
-    {
-        return children;
-    }
-
-    children_t getGrandChildren() {
-        children_t grandChildren;
-
-        for(auto child : children) {
-            children_t gc = child->getChildren();
-            grandChildren.insert(grandChildren.end(), gc.begin(), gc.end());
-        }
-
-        return grandChildren;
-    }
-
-    int getTotalDescendants()
-    {
-        children_t grandChildren = getGrandChildren();
-        int descendants = grandChildren.size();
-
-        for(auto grandChild : grandChildren) {
-            descendants += grandChild->getTotalDescendants();
-        }
-
-        return descendants;
-    }
-
-};
 
 int main() 
 {
@@ -82,14 +34,14 @@ int main()
             // Ensure the 2 nodes exist in our map. If they don't, 
             // create them so we can add `finish` as a child of `start`.
             if(nodes.find(start) == nodes.end()) {
-                nodes[start] = Node(start);
+                nodes.insert(map<int, Node>::value_type (start, Node(start)));
             }
 
             if (nodes.find(finish) == nodes.end()) {
-                nodes[finish] = Node(finish);
+                nodes.insert(map<int, Node>::value_type (finish, Node(finish)));
             }
 
-            nodes[start].addChild(nodes[finish]);
+            nodes.find(start)->second.addChild(nodes.find(finish)->second);
         }
 
         for (auto node : nodes) {
