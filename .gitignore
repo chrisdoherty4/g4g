@@ -1,1 +1,4 @@
 build
+node-at-even-distance/main
+subprojects/*
+!subprojects/*.wrap

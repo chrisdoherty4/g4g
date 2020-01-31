@@ -4,9 +4,73 @@
 #include <sstream>
 #include <memory>
 #include <map>
-#include "Node.hpp"
 
 using namespace std;
+
+class Node;
+typedef vector<reference_wrapper<Node>> children_t;
+
+class Node 
+{
+    children_t children;
+
+    int ident;
+
+public:
+
+    Node(int ident) : ident(ident) {}
+
+    Node(const Node& n)
+    {
+        ident = n.ident;
+        children = n.children;
+    }
+
+    int operator==(const Node& n)
+    {
+        return &n == this && ident == n.ident;
+    }
+
+    int getIdent()
+    {
+        return ident;
+    }
+
+    void addChild(Node& node)
+    {
+        children.push_back(ref(node));
+    }
+
+    children_t getChildren()
+    {
+        return children;
+    }
+
+    children_t getGrandChildren()
+    {
+        children_t grandChildren;
+
+        for(auto child : children) {
+            children_t gc = child.get().getChildren();
+            grandChildren.insert(grandChildren.end(), gc.begin(), gc.end());
+        }
+
+        return grandChildren;
+    }
+
+    int getTotalDescendants()
+    {
+        children_t grandChildren = getGrandChildren();
+        int descendants = grandChildren.size();
+
+        for(auto grandChild : grandChildren) {
+            descendants += grandChild.get().getTotalDescendants();
+        }
+
+        return descendants;
+    }
+
+};
 
 int main() 
 {
@@ -17,7 +81,8 @@ int main()
     int nodeCount, start, finish, totalPaths;
     string edges;
 
-    map<int, Node> nodes;
+    typedef map<int, Node> nodes_t;
+    nodes_t nodes;
 
     while(testCount--) {
         // Reset everything
@@ -29,23 +94,26 @@ int main()
 
         getline(cin, edges);
         istringstream edges_ss(edges);
-        
+
         while(edges_ss >> start >> finish) {
             // Ensure the 2 nodes exist in our map. If they don't, 
             // create them so we can add `finish` as a child of `start`.
             if(nodes.find(start) == nodes.end()) {
-                nodes.insert(map<int, Node>::value_type (start, Node(start)));
+                nodes.insert(nodes_t::value_type(start, Node(start)));
             }
 
             if (nodes.find(finish) == nodes.end()) {
-                nodes.insert(map<int, Node>::value_type (finish, Node(finish)));
+                nodes.insert(nodes_t::value_type(finish, Node(finish)));
             }
 
             nodes.find(start)->second.addChild(nodes.find(finish)->second);
         }
 
+        int descendants;
         for (auto node : nodes) {
-            totalPaths += node.second.getTotalDescendants();
+            descendants = node.second.getTotalDescendants();
+            cerr << node.second.getIdent() << " has " << descendants << " descendants" << endl;
+            totalPaths += descendants;
         }
 
         cout << totalPaths << endl;

@@ -1,0 +1,1 @@
+executable('kth-smallest-element', 'main.cc')
