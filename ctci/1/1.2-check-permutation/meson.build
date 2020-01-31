@@ -1,0 +1,1 @@
+executable('permutation', 'permutation.cc')
