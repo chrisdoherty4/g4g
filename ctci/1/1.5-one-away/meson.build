@@ -1,0 +1,1 @@
+executable('one-away', 'one-away.cc')
