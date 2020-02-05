@@ -1,0 +1,1 @@
+executable('palindrome', 'palindrome.cc')
