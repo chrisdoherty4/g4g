@@ -16,7 +16,7 @@ string compress(string str)
 
     stringstream ret;
     string::iterator it1 = str.begin();
-    string::iterator it2 = str.begin();
+    string::iterator it2 = it1 + 1;
 
     while (it1 != str.end()) {
         ret << *it1;
@@ -25,6 +25,7 @@ string compress(string str)
         
         ret << distance(it1, it2);
         it1 = it2;
+        ++it2;
     }
 
     return ret.str().length() < str.length() ? ret.str() : str;
