@@ -1,1 +1,0 @@
-executable('permutation', 'permutation.cc')

@@ -1,1 +1,0 @@
-executable('palindrome', 'palindrome.cc')

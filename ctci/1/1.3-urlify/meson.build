@@ -1,1 +1,0 @@
-executable('urlify', 'urlify.cc')
